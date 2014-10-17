@@ -23,6 +23,7 @@ import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.prefab.Prefab;
 import org.terasology.entitySystem.prefab.PrefabManager;
+import org.terasology.logic.common.DisplayNameComponent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.ItemComponent;
@@ -32,12 +33,14 @@ import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.databinding.Binding;
 import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.rendering.nui.widgets.UIDropdown;
+import org.terasology.rendering.nui.widgets.UIText;
 import org.terasology.world.block.BlockManager;
 import org.terasology.world.block.BlockUri;
 import org.terasology.world.block.items.BlockItemComponent;
 import org.terasology.world.block.items.BlockItemFactory;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +51,10 @@ public class BlockPickerScreen extends CoreScreenLayer {
     @In
     InventoryManager inventoryManager;
 
-    Set<EntityRef> allItemEntities;
+    UIDropdown dropdown;
+    UIText filterText;
+
+    List<EntityRef> allItemEntities;
     EntityRef inventoryEntity;
 
     @Override
@@ -61,7 +67,25 @@ public class BlockPickerScreen extends CoreScreenLayer {
         InventoryGrid inventoryGrid = find("inventoryGrid", InventoryGrid.class);
         inventoryGrid.setTargetEntity(inventoryEntity);
 
-        UIDropdown dropdown = find("categoryDropDown", UIDropdown.class);
+
+        filterText = find("filterText", UIText.class);
+        filterText.bindText(new Binding<String>() {
+            String currentText;
+
+            @Override
+            public String get() {
+                return currentText;
+            }
+
+            @Override
+            public void set(String value) {
+                currentText = value;
+                refreshInventory();
+
+            }
+        });
+
+        dropdown = find("categoryDropDown", UIDropdown.class);
 
         List<String> options = Lists.newArrayList();
         for (EntityRef entityRef : allItemEntities) {
@@ -91,23 +115,32 @@ public class BlockPickerScreen extends CoreScreenLayer {
             @Override
             public void set(Object value) {
                 selectedValue = (String) value;
-
-                InventoryComponent inventoryComponent = new InventoryComponent();
-
-                for (EntityRef item : allItemEntities) {
-                    BlockItemComponent blockItemComponent = item.getComponent(BlockItemComponent.class);
-                    if ((blockItemComponent != null && blockItemComponent.blockFamily != null && blockItemComponent.blockFamily.hasCategory(selectedValue))
-                            || selectedValue.equals("All")
-                            || (blockItemComponent == null && selectedValue.equals("Items"))) {
-                        inventoryComponent.itemSlots.add(item);
-                    }
-                }
-
-                inventoryEntity.saveComponent(inventoryComponent);
+                refreshInventory();
             }
         });
         dropdown.setSelection("All");
+    }
 
+    private void refreshInventory() {
+        String selectedValue = (String) dropdown.getSelection();
+        String filter = filterText.getText();
+
+        InventoryComponent inventoryComponent = new InventoryComponent();
+        for (EntityRef item : allItemEntities) {
+            BlockItemComponent blockItemComponent = item.getComponent(BlockItemComponent.class);
+            DisplayNameComponent displayNameComponent = item.getComponent(DisplayNameComponent.class);
+
+            if (((blockItemComponent != null && blockItemComponent.blockFamily != null && blockItemComponent.blockFamily.hasCategory(selectedValue))
+                    || selectedValue.equals("All")
+                    || (blockItemComponent == null && selectedValue.equals("Items")))
+                    && ((filter == null || filter.isEmpty())
+                    || (blockItemComponent != null && blockItemComponent.blockFamily != null && blockItemComponent.blockFamily.getDisplayName() != null && blockItemComponent.blockFamily.getDisplayName().contains(filter))
+                    || (displayNameComponent != null && displayNameComponent.name != null && displayNameComponent.name.contains(filter)))) {
+
+                inventoryComponent.itemSlots.add(item);
+            }
+        }
+        inventoryEntity.saveComponent(inventoryComponent);
     }
 
     @Override
@@ -116,7 +149,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     private void refreshAllItemEntities() {
-        allItemEntities = Sets.newHashSet();
+        allItemEntities = Lists.newArrayList();
 
         BlockManager blockManager = CoreRegistry.get(BlockManager.class);
         PrefabManager prefabManager = CoreRegistry.get(PrefabManager.class);
@@ -146,7 +179,16 @@ public class BlockPickerScreen extends CoreScreenLayer {
         Iterables.addAll(blocks, blockManager.listAvailableBlockUris());
         Iterables.addAll(blocks, blockManager.listFreeformBlockUris());
 
-        for (BlockUri block : blocks) {
+        List<BlockUri> blockList = Lists.newArrayList(blocks);
+        Collections.sort(blockList, new Comparator<BlockUri>() {
+            @Override
+            public int compare(BlockUri o1, BlockUri o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
+
+
+        for (BlockUri block : blockList) {
             EntityRef entity = blockFactory.newInstance(blockManager.getBlockFamily(block.getFamilyUri()), 99);
             entity.setPersistent(false);
             if (entity.exists()) {

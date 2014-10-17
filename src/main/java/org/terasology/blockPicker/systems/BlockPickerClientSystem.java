@@ -16,7 +16,6 @@
 package org.terasology.blockPicker.systems;
 
 import org.terasology.blockPicker.events.BlockPickerScreenButton;
-import org.terasology.blockPicker.ui.BlockPickerScreen;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
@@ -34,6 +33,9 @@ public class BlockPickerClientSystem extends BaseComponentSystem {
 
     @ReceiveEvent(components = {CharacterComponent.class, InventoryComponent.class})
     public void onOpenContainer(BlockPickerScreenButton event, EntityRef entity) {
-        nuiManager.pushScreen("BlockPicker:BlockPickerScreen", BlockPickerScreen.class);
+        if (event.getState().isDown()) {
+            nuiManager.toggleScreen("BlockPicker:BlockPickerScreen");
+            event.consume();
+        }
     }
 }

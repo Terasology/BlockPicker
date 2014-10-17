@@ -1,33 +1,50 @@
 {
-    "type" : "BlockPickerScreen",
-    "contents" : {
-        "type" : "relativeLayout",
-        "contents" : [
+    "type": "BlockPickerScreen",
+    "contents": {
+        "type": "relativeLayout",
+        "contents": [
             {
-                "type" : "ColumnLayout",
-                "contents" : [
+                "type": "RowLayout",
+                "contents": [
                     {
-                        "type" : "UILabel",
-                        "text" : "Block Picker"
+                        "type": "UIDropdown",
+                        "id": "categoryDropDown"
                     },
                     {
-                        "type" : "UIDropdown",
-                        "id" : "categoryDropDown"
-                    },
-                    {
-                        "type" : "ScrollableArea",
-                        "content" : {
-                            "type" : "InventoryGrid",
-                            "id" : "inventoryGrid",
-                            "maxHorizontalCells" : 8
-                        }
+                        "type": "UIText",
+                        "id": "filterText"
                     }
                 ],
-                 "layoutInfo" : {
-                     "use-content-width" : true,
-                     "use-content-height" : true,
-                    "position-horizontal-center" : {},
-                    "position-vertical-center" : {}
+                "layoutInfo": {
+                    "height": 50,
+                    "position-left" : {
+                        "target" : "LEFT",
+                        "widget" : "scrollable"
+                    },
+                    "position-right" : {
+                        "target" : "RIGHT",
+                        "widget" : "scrollable"
+                    },
+                    "position-bottom" : {
+                        "target" : "TOP",
+                        "widget" : "scrollable",
+                        "offset" : 3
+                    }
+                }
+            },
+            {
+                "type": "ScrollableArea",
+                "id" : "scrollable",
+                "content": {
+                    "type": "InventoryGrid",
+                    "id": "inventoryGrid",
+                    "maxHorizontalCells": 9
+                },
+                 "layoutInfo": {
+                     "width": 530,
+                     "height": 300,
+                     "position-horizontal-center": {},
+                     "position-vertical-center": {}
                  }
             }
         ]
