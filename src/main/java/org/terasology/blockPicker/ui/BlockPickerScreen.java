@@ -67,7 +67,6 @@ public class BlockPickerScreen extends CoreScreenLayer {
         InventoryGrid inventoryGrid = find("inventoryGrid", InventoryGrid.class);
         inventoryGrid.setTargetEntity(inventoryEntity);
 
-
         filterText = find("filterText", UIText.class);
         filterText.bindText(new Binding<String>() {
             String currentText;
@@ -122,25 +121,40 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     private void refreshInventory() {
-        String selectedValue = (String) dropdown.getSelection();
+        String selectedCategory = (String) dropdown.getSelection();
         String filter = filterText.getText();
+        if (filter != null) {
+            filter = filter.toLowerCase();
+        }
 
         InventoryComponent inventoryComponent = new InventoryComponent();
         for (EntityRef item : allItemEntities) {
             BlockItemComponent blockItemComponent = item.getComponent(BlockItemComponent.class);
             DisplayNameComponent displayNameComponent = item.getComponent(DisplayNameComponent.class);
 
-            if (((blockItemComponent != null && blockItemComponent.blockFamily != null && blockItemComponent.blockFamily.hasCategory(selectedValue))
-                    || selectedValue.equals("All")
-                    || (blockItemComponent == null && selectedValue.equals("Items")))
-                    && ((filter == null || filter.isEmpty())
-                    || (blockItemComponent != null && blockItemComponent.blockFamily != null && blockItemComponent.blockFamily.getDisplayName() != null && blockItemComponent.blockFamily.getDisplayName().contains(filter))
-                    || (displayNameComponent != null && displayNameComponent.name != null && displayNameComponent.name.contains(filter)))) {
-
-                inventoryComponent.itemSlots.add(item);
+            if (!matchesCategory(blockItemComponent, selectedCategory)) {
+                continue;
             }
+            if (!matchesFilter(blockItemComponent, displayNameComponent, filter)) {
+                continue;
+            }
+
+            inventoryComponent.itemSlots.add(item);
         }
         inventoryEntity.saveComponent(inventoryComponent);
+    }
+
+    private boolean matchesCategory(final BlockItemComponent component, final String category) {
+        return (category.equals("All"))
+            || (component == null && category.equals("Items")
+            || (component != null && component.blockFamily != null && component.blockFamily.hasCategory(category)));
+    }
+
+    private boolean matchesFilter(final BlockItemComponent itemComponent, final DisplayNameComponent nameComponent, final String filter) {
+        return (filter == null || filter.isEmpty())
+            || (itemComponent != null && itemComponent.blockFamily != null && itemComponent.blockFamily.getDisplayName() != null
+            && itemComponent.blockFamily.getDisplayName().toLowerCase().contains(filter))
+            || (nameComponent != null && nameComponent.name != null && nameComponent.name.toLowerCase().contains(filter));
     }
 
     @Override
