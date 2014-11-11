@@ -46,6 +46,9 @@ import java.util.Set;
 
 public class BlockPickerScreen extends CoreScreenLayer {
 
+    private static final String CATEGORY_ALL = "All";
+    private static final String CATEGORY_ITEMS = "Items";
+
     @In
     EntityManager entityManager;
     @In
@@ -98,8 +101,8 @@ public class BlockPickerScreen extends CoreScreenLayer {
             }
         }
         Collections.sort(options);
-        options.add(0, "All");
-        options.add(1, "Items");
+        options.add(0, CATEGORY_ALL);
+        options.add(1, CATEGORY_ITEMS);
 
         dropdown.setOptions(options);
 
@@ -117,7 +120,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
                 refreshInventory();
             }
         });
-        dropdown.setSelection("All");
+        dropdown.setSelection(CATEGORY_ALL);
     }
 
     private void refreshInventory() {
@@ -144,17 +147,84 @@ public class BlockPickerScreen extends CoreScreenLayer {
         inventoryEntity.saveComponent(inventoryComponent);
     }
 
-    private boolean matchesCategory(final BlockItemComponent component, final String category) {
-        return (category.equals("All"))
-            || (component == null && category.equals("Items")
-            || (component != null && component.blockFamily != null && component.blockFamily.hasCategory(category)));
+    /**
+     * Checks whether the given {@link org.terasology.world.block.items.BlockItemComponent} matches the specific category.
+     *
+     * @param itemComponent the item's the block item (might be {@code null}).
+     * @param category      the category to test in lower case.
+     * @return {@code true} if the item matches the category, {@code false} otherwise.
+     */
+    private boolean matchesCategory(final BlockItemComponent itemComponent, final String category) {
+        return (category.equals(CATEGORY_ALL))
+            || (itemComponent == null && category.equals(CATEGORY_ITEMS)
+            || (itemComponent != null && itemComponent.blockFamily != null && itemComponent.blockFamily.hasCategory(category)));
     }
 
+    /**
+     * Checks whether the given item matches the filter.
+     * <p/>
+     * Usually the given {@link org.terasology.world.block.items.BlockItemComponent} and {@link org.terasology.logic.common.DisplayNameComponent} belong to the same {@link
+     * org.terasology.entitySystem.entity.EntityRef}.
+     *
+     * @param itemComponent the item's block component to test (might be {@code null}).
+     * @param nameComponent the item's name component to test (might be {@code null}).
+     * @param filter        the filter string in lower case.
+     * @return {@code true} if the item matches the filter, {@code false} otherwise.
+     */
     private boolean matchesFilter(final BlockItemComponent itemComponent, final DisplayNameComponent nameComponent, final String filter) {
         return (filter == null || filter.isEmpty())
-            || (itemComponent != null && itemComponent.blockFamily != null && itemComponent.blockFamily.getDisplayName() != null
-            && itemComponent.blockFamily.getDisplayName().toLowerCase().contains(filter))
-            || (nameComponent != null && nameComponent.name != null && nameComponent.name.toLowerCase().contains(filter));
+            || familyMatchesFilter(itemComponent, filter)
+            || categoryMatchesFilter(itemComponent, filter)
+            || nameMatchesFilter(nameComponent, filter);
+    }
+
+    /**
+     * Checks whether the given {@link org.terasology.logic.common.DisplayNameComponent} matches the given filter.
+     *
+     * @param nameComponent the name component to test against (might be {@code null}).
+     * @param filter        the filter string in lower case.
+     * @return {@code true} if the name component matches the filter, {@code false} othewise.
+     */
+    private boolean nameMatchesFilter(final DisplayNameComponent nameComponent, final String filter) {
+        return (nameComponent != null && nameComponent.name != null && nameComponent.name.toLowerCase().contains(filter));
+    }
+
+    /**
+     * Checks whether the {@link org.terasology.world.block.family.BlockFamily}'s categories match the given filter.
+     *
+     * @param itemComponent the block item (might be {@code null}).
+     * @param filter        the filter string in lower case.
+     * @return {@code true} if one of the block's categories match the filter, {@code false} otherwise.
+     */
+    private boolean categoryMatchesFilter(final BlockItemComponent itemComponent, final String filter) {
+        if (itemComponent != null && itemComponent.blockFamily != null) {
+            Iterable<String> categories = itemComponent.blockFamily.getCategories();
+            if (categories == null) {
+                return false;
+            }
+            for (String category : categories) {
+                if (category.toLowerCase().contains(filter)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the {@link org.terasology.world.block.family.BlockFamily} of the given {@link org.terasology.world.block.items.BlockItemComponent} matches the given
+     * filter.
+     *
+     * @param itemComponent the block item (might be {@code null}).
+     * @param filter        the filter string in lower case.
+     * @return {@code true} if the block family matches the filter, {@code false} otherwise.
+     */
+    private boolean familyMatchesFilter(final BlockItemComponent itemComponent, final String filter) {
+        if (itemComponent != null && itemComponent.blockFamily != null && itemComponent.blockFamily.getDisplayName() != null) {
+            final String familyDisplayName = itemComponent.blockFamily.getDisplayName().toLowerCase();
+            return familyDisplayName.contains(filter);
+        }
+        return false;
     }
 
     @Override
