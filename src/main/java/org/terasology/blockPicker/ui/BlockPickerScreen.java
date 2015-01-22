@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.terasology.blockPicker.components.BlockPickerComponent;
+import org.terasology.entitySystem.entity.EntityBuilder;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.prefab.Prefab;
@@ -36,6 +37,7 @@ import org.terasology.rendering.nui.widgets.UIDropdown;
 import org.terasology.rendering.nui.widgets.UIText;
 import org.terasology.world.block.BlockManager;
 import org.terasology.world.block.BlockUri;
+import org.terasology.world.block.family.BlockFamily;
 import org.terasology.world.block.items.BlockItemComponent;
 import org.terasology.world.block.items.BlockItemFactory;
 
@@ -64,8 +66,11 @@ public class BlockPickerScreen extends CoreScreenLayer {
     protected void initialise() {
         refreshAllItemEntities();
 
-        inventoryEntity = entityManager.create(new InventoryComponent(), new BlockPickerComponent());
-        inventoryEntity.setPersistent(false);
+        EntityBuilder entityBuilder =   entityManager.newBuilder();
+        entityBuilder.addComponent(new InventoryComponent());
+        entityBuilder.addComponent(new BlockPickerComponent());
+        entityBuilder.setPersistent(false);
+        inventoryEntity = entityBuilder.build();
 
         InventoryGrid inventoryGrid = find("inventoryGrid", InventoryGrid.class);
         inventoryGrid.setTargetEntity(inventoryEntity);
@@ -241,8 +246,9 @@ public class BlockPickerScreen extends CoreScreenLayer {
         for (Prefab prefab : prefabManager.listPrefabs()) {
             ItemComponent itemComp = prefab.getComponent(ItemComponent.class);
             if (itemComp != null) {
-                EntityRef entity = entityManager.create(prefab);
-                entity.setPersistent(false);
+                EntityBuilder entityBuilder = entityManager.newBuilder(prefab);
+                entityBuilder.setPersistent(false);
+                EntityRef entity = entityBuilder.build();
                 if (entity.exists() && entity.getComponent(ItemComponent.class) != null) {
                     // ensure there are the maximum amount of items in the stack
                     ItemComponent itemComponent = entity.getComponent(ItemComponent.class);
@@ -273,8 +279,10 @@ public class BlockPickerScreen extends CoreScreenLayer {
 
 
         for (BlockUri block : blockList) {
-            EntityRef entity = blockFactory.newInstance(blockManager.getBlockFamily(block.getFamilyUri()), 99);
-            entity.setPersistent(false);
+            BlockFamily blockFamily = blockManager.getBlockFamily(block.getFamilyUri());
+            EntityBuilder builder = blockFactory.newBuilder(blockFamily, 99);
+            builder.setPersistent(false);
+            EntityRef entity = builder.build();
             if (entity.exists()) {
                 allItemEntities.add(entity);
             }
