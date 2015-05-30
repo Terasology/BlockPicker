@@ -18,6 +18,7 @@ package org.terasology.blockPicker.ui;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.terasology.assets.management.AssetManager;
 import org.terasology.blockPicker.components.BlockPickerComponent;
 import org.terasology.entitySystem.entity.EntityBuilder;
 import org.terasology.entitySystem.entity.EntityManager;
@@ -35,6 +36,7 @@ import org.terasology.rendering.nui.databinding.Binding;
 import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.rendering.nui.widgets.UIDropdown;
 import org.terasology.rendering.nui.widgets.UIText;
+import org.terasology.world.block.BlockExplorer;
 import org.terasology.world.block.BlockManager;
 import org.terasology.world.block.BlockUri;
 import org.terasology.world.block.family.BlockFamily;
@@ -55,6 +57,9 @@ public class BlockPickerScreen extends CoreScreenLayer {
     EntityManager entityManager;
     @In
     InventoryManager inventoryManager;
+
+    @In
+    AssetManager assetManager;
 
     UIDropdown dropdown;
     UIText filterText;
@@ -126,6 +131,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
             }
         });
         dropdown.setSelection(CATEGORY_ALL);
+
     }
 
     private void refreshInventory() {
@@ -238,6 +244,8 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     private void refreshAllItemEntities() {
+        BlockExplorer blockExplorer = new BlockExplorer(assetManager);
+
         allItemEntities = Lists.newArrayList();
 
         BlockManager blockManager = CoreRegistry.get(BlockManager.class);
@@ -266,8 +274,8 @@ public class BlockPickerScreen extends CoreScreenLayer {
 
 
         Iterables.addAll(blocks, blockManager.listRegisteredBlockUris());
-        Iterables.addAll(blocks, blockManager.listAvailableBlockUris());
-        Iterables.addAll(blocks, blockManager.listFreeformBlockUris());
+        Iterables.addAll(blocks, blockExplorer.getAvailableBlockFamilies());
+        Iterables.addAll(blocks, blockExplorer.getFreeformBlockFamilies());
 
         List<BlockUri> blockList = Lists.newArrayList(blocks);
         Collections.sort(blockList, new Comparator<BlockUri>() {
