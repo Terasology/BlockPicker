@@ -68,7 +68,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     EntityRef inventoryEntity;
 
     @Override
-    protected void initialise() {
+    public void initialise() {
         refreshAllItemEntities();
 
         EntityBuilder entityBuilder =   entityManager.newBuilder();
