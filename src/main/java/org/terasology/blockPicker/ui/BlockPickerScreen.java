@@ -44,7 +44,6 @@ import org.terasology.world.block.items.BlockItemComponent;
 import org.terasology.world.block.items.BlockItemFactory;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -254,45 +253,48 @@ public class BlockPickerScreen extends CoreScreenLayer {
         for (Prefab prefab : prefabManager.listPrefabs()) {
             ItemComponent itemComp = prefab.getComponent(ItemComponent.class);
             if (itemComp != null) {
-                EntityBuilder entityBuilder = entityManager.newBuilder(prefab);
-                entityBuilder.setPersistent(false);
-                EntityRef entity = entityBuilder.build();
-                if (entity.exists() && entity.getComponent(ItemComponent.class) != null) {
-                    // ensure there are the maximum amount of items in the stack
-                    ItemComponent itemComponent = entity.getComponent(ItemComponent.class);
-                    if (!itemComponent.stackId.isEmpty()) {
-                        itemComponent.stackCount = itemComponent.maxStackSize;
-                        entity.saveComponent(itemComponent);
+                try {
+                    EntityBuilder entityBuilder = entityManager.newBuilder(prefab);
+                    entityBuilder.setPersistent(false);
+                    EntityRef entity = entityBuilder.build();
+                    if (entity.exists() && entity.getComponent(ItemComponent.class) != null) {
+                        // ensure there are the maximum amount of items in the stack
+                        ItemComponent itemComponent = entity.getComponent(ItemComponent.class);
+                        if (!itemComponent.stackId.isEmpty()) {
+                            itemComponent.stackCount = itemComponent.maxStackSize;
+                            entity.saveComponent(itemComponent);
+                        }
+                        allItemEntities.add(entity);
                     }
-                    allItemEntities.add(entity);
+                } catch (Exception ex) {
+                    // ignore all exceptions,  it will prevent bad blocks from breaking everything.
                 }
             }
         }
 
         BlockItemFactory blockFactory = new BlockItemFactory(entityManager);
+        // hash set so that duplicates are eliminated
         Set<BlockUri> blocks = Sets.newHashSet();
-
 
         Iterables.addAll(blocks, blockManager.listRegisteredBlockUris());
         Iterables.addAll(blocks, blockExplorer.getAvailableBlockFamilies());
         Iterables.addAll(blocks, blockExplorer.getFreeformBlockFamilies());
 
         List<BlockUri> blockList = Lists.newArrayList(blocks);
-        Collections.sort(blockList, new Comparator<BlockUri>() {
-            @Override
-            public int compare(BlockUri o1, BlockUri o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
-
+        blockList.sort((BlockUri o1, BlockUri o2) -> o1.toString().compareTo(o2.toString()));
 
         for (BlockUri block : blockList) {
-            BlockFamily blockFamily = blockManager.getBlockFamily(block.getFamilyUri());
-            EntityBuilder builder = blockFactory.newBuilder(blockFamily, 99);
-            builder.setPersistent(false);
-            EntityRef entity = builder.build();
-            if (entity.exists()) {
-                allItemEntities.add(entity);
+            if (!block.equals(BlockManager.AIR_ID) && !block.equals(BlockManager.UNLOADED_ID)) {
+                BlockFamily blockFamily = blockManager.getBlockFamily(block.getFamilyUri());
+                EntityBuilder builder = blockFactory.newBuilder(blockFamily, 99);
+                builder.setPersistent(false);
+                BlockItemComponent blockItemComponent = builder.getComponent(BlockItemComponent.class);
+                if (blockItemComponent != null && blockItemComponent.blockFamily != null) {
+                    EntityRef entity = builder.build();
+                    if (entity.exists()) {
+                        allItemEntities.add(entity);
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 {
     "type": "BlockPickerScreen",
+    "skin": "core:inventoryDefault",
     "contents": {
         "type": "relativeLayout",
         "contents": [
