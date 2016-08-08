@@ -39,15 +39,37 @@
                 "content": {
                     "type": "InventoryGrid",
                     "id": "inventoryGrid",
-                    "maxHorizontalCells": 9
+                    "maxHorizontalCells": 10
                 },
                  "layoutInfo": {
-                     "width": 530,
+                     "width": 600,
                      "height": 300,
                      "position-horizontal-center": {},
-                     "position-vertical-center": {}
+                   "position-top": {
+                             "target": "TOP",
+                              "offset" : 70
+                   }
                  }
+            },
+            {
+                "type" : "InventoryGrid",
+                "id" : "inventory",
+                "maxHorizontalCells" : 10,
+                "layoutInfo" : {
+                    "use-content-width" : true,
+                    "use-content-height" : true,
+                    "position-top" :
+                    {
+                        "target" : "BOTTOM",
+                        "widget" : "scrollable",
+                        "offset" : 16
+                    },
+                    "position-horizontal-center" : {}
+
+                }
             }
+
         ]
+
     }
 }

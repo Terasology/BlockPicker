@@ -29,10 +29,12 @@ import org.terasology.logic.common.DisplayNameComponent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.ItemComponent;
+import org.terasology.logic.players.LocalPlayer;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.databinding.Binding;
+import org.terasology.rendering.nui.databinding.ReadOnlyBinding;
 import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.rendering.nui.widgets.UIDropdown;
 import org.terasology.rendering.nui.widgets.UIText;
@@ -56,15 +58,17 @@ public class BlockPickerScreen extends CoreScreenLayer {
     EntityManager entityManager;
     @In
     InventoryManager inventoryManager;
-
     @In
     AssetManager assetManager;
+    @In
+    private LocalPlayer localPlayer;
 
     UIDropdown dropdown;
     UIText filterText;
 
     List<EntityRef> allItemEntities;
     EntityRef inventoryEntity;
+
 
     @Override
     public void initialise() {
@@ -78,6 +82,16 @@ public class BlockPickerScreen extends CoreScreenLayer {
 
         InventoryGrid inventoryGrid = find("inventoryGrid", InventoryGrid.class);
         inventoryGrid.setTargetEntity(inventoryEntity);
+
+        //bind local player inventory below the main block picker screen
+        InventoryGrid inventory = find("inventory", InventoryGrid.class);
+        inventory.bindTargetEntity(new ReadOnlyBinding<EntityRef>() {
+            @Override
+            public EntityRef get() {
+                return localPlayer.getCharacterEntity();
+            }
+        });
+        inventory.setCellOffset(10);
 
         filterText = find("filterText", UIText.class);
         filterText.bindText(new Binding<String>() {
@@ -130,8 +144,8 @@ public class BlockPickerScreen extends CoreScreenLayer {
             }
         });
         dropdown.setSelection(CATEGORY_ALL);
-
     }
+
 
     private void refreshInventory() {
         String selectedCategory = (String) dropdown.getSelection();
