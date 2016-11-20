@@ -1,6 +1,6 @@
 {
     "id" : "BlockPicker",
-    "version" : "0.1.2-SNAPSHOT",
+    "version" : "1.0.0-SNAPSHOT",
     "author" : "",
     "displayName" : "BlockPicker",
     "description" : "An infinite inventory to build with ('b' is the default keybinding)",
