@@ -38,7 +38,7 @@
                 "id" : "scrollable",
                 "content": {
                     "type": "InventoryGrid",
-                    "id": "inventoryGrid",
+                    "id": "blockPickerGrid",
                     "maxHorizontalCells": 10
                 },
                  "layoutInfo": {

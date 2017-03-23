@@ -34,6 +34,7 @@ import org.terasology.registry.CoreRegistry;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.databinding.Binding;
+import org.terasology.rendering.nui.databinding.DefaultBinding;
 import org.terasology.rendering.nui.databinding.ReadOnlyBinding;
 import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.rendering.nui.widgets.UIDropdown;
@@ -67,21 +68,23 @@ public class BlockPickerScreen extends CoreScreenLayer {
     UIText filterText;
 
     List<EntityRef> allItemEntities;
-    EntityRef inventoryEntity;
+    Binding<EntityRef> inventoryEntity;
 
 
     @Override
     public void initialise() {
         refreshAllItemEntities();
 
-        EntityBuilder entityBuilder =   entityManager.newBuilder();
+        EntityBuilder entityBuilder = entityManager.newBuilder();
         entityBuilder.addComponent(new InventoryComponent());
         entityBuilder.addComponent(new BlockPickerComponent());
         entityBuilder.setPersistent(false);
-        inventoryEntity = entityBuilder.build();
+        entityBuilder.setOwner(localPlayer.getClientEntity());
+        inventoryEntity = new DefaultBinding<>(entityBuilder.build());
 
-        InventoryGrid inventoryGrid = find("inventoryGrid", InventoryGrid.class);
-        inventoryGrid.setTargetEntity(inventoryEntity);
+
+        InventoryGrid blockPickerGrid = find("blockPickerGrid", InventoryGrid.class);
+        blockPickerGrid.bindTargetEntity(inventoryEntity);
 
         //bind local player inventory below the main block picker screen
         InventoryGrid inventory = find("inventory", InventoryGrid.class);
@@ -168,7 +171,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
 
             inventoryComponent.itemSlots.add(item);
         }
-        inventoryEntity.saveComponent(inventoryComponent);
+        inventoryEntity.get().saveComponent(inventoryComponent);
     }
 
     /**
