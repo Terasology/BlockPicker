@@ -1,11 +1,10 @@
 {
     "id" : "BlockPicker",
-    "version" : "1.0.1-SNAPSHOT",
+    "version" : "1.1.0",
     "author" : "",
     "displayName" : "BlockPicker",
     "description" : "An infinite inventory to build with ('b' is the default keybinding)",
-    "dependencies" : [
-        {"id" : "Core", "minVersion" : "3.0.0"}
-    ],
-    "isServerSideOnly" : false
+    "dependencies" : [],
+    "isServerSideOnly" : false,
+    "isSpecial": true
 }
