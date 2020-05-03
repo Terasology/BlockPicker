@@ -4,7 +4,9 @@
     "author" : "",
     "displayName" : "BlockPicker",
     "description" : "An infinite inventory to build with ('b' is the default keybinding)",
-    "dependencies" : [],
+    "dependencies" : [
+        {"id" : "Inventory", "minVersion" : "1.1.0"}
+    ],
     "isServerSideOnly" : false,
     "isSpecial": true
 }
