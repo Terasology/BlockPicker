@@ -3,7 +3,7 @@
     "version": "1.1.0",
     "author": "The Terasology Foundation",
     "displayName": "BlockPicker",
-    "description": "An infinite inventory to build with ('b' is the default keybinding)",
+    "description": "An infinite inventory to boost your creativity while building.\n\n'b' is the default keybinding to open the block picker\n\nUnstable module, only use with limited number of asset modules",
     "dependencies": [
         { "id": "Inventory", "minVersion": "1.1.0" }
     ],
