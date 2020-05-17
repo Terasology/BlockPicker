@@ -1,11 +1,13 @@
 {
-    "id" : "BlockPicker",
-    "version" : "1.0.1-SNAPSHOT",
-    "author" : "",
-    "displayName" : "BlockPicker",
-    "description" : "An infinite inventory to build with ('b' is the default keybinding)",
-    "dependencies" : [
-        {"id" : "Core", "minVersion" : "3.0.0"}
+    "id": "BlockPicker",
+    "version": "1.1.0",
+    "author": "The Terasology Foundation",
+    "displayName": "BlockPicker",
+    "description": "An infinite inventory to boost your creativity while building.\n\n'b' is the default keybinding to open the block picker\n\nUnstable module, only use with limited number of asset modules",
+    "dependencies": [
+        { "id": "Inventory", "minVersion": "1.1.0" }
     ],
-    "isServerSideOnly" : false
+    "isServerSideOnly": false,
+    "isAugmentation": true,
+    "isLibrary": true
 }
