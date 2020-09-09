@@ -1,75 +1,71 @@
 {
-    "type": "BlockPickerScreen",
-    "skin": "inventory:inventoryDefault",
-    "contents": {
-        "type": "relativeLayout",
+  "type": "BlockPickerScreen",
+  "skin": "inventory:inventoryDefault",
+  "contents": {
+    "type": "relativeLayout",
+    "contents": [
+      {
+        "type": "RowLayout",
         "contents": [
-            {
-                "type": "RowLayout",
-                "contents": [
-                    {
-                        "type": "UIDropdown",
-                        "id": "categoryDropDown"
-                    },
-                    {
-                        "type": "UIText",
-                        "id": "filterText"
-                    }
-                ],
-                "layoutInfo": {
-                    "height": 50,
-                    "position-left" : {
-                        "target" : "LEFT",
-                        "widget" : "scrollable"
-                    },
-                    "position-right" : {
-                        "target" : "RIGHT",
-                        "widget" : "scrollable"
-                    },
-                    "position-bottom" : {
-                        "target" : "TOP",
-                        "widget" : "scrollable",
-                        "offset" : 3
-                    }
-                }
-            },
-            {
-                "type": "ScrollableArea",
-                "id" : "scrollable",
-                "content": {
-                    "type": "InventoryGrid",
-                    "id": "blockPickerGrid",
-                    "maxHorizontalCells": 10
-                },
-                 "layoutInfo": {
-                     "width": 600,
-                     "height": 300,
-                     "position-horizontal-center": {},
-                   "position-top": {
-                             "target": "TOP",
-                              "offset" : 70
-                   }
-                 }
-            },
-            {
-                "type" : "InventoryGrid",
-                "id" : "inventory",
-                "maxHorizontalCells" : 10,
-                "layoutInfo" : {
-                    "use-content-width" : true,
-                    "use-content-height" : true,
-                    "position-top" :
-                    {
-                        "target" : "BOTTOM",
-                        "widget" : "scrollable",
-                        "offset" : 16
-                    },
-                    "position-horizontal-center" : {}
-
-                }
-            }
-
-        ]
-
-    }
+          {
+            "type": "UIDropdown",
+            "id": "categoryDropDown"
+          },
+          {
+            "type": "UIText",
+            "id": "filterText"
+          }
+        ],
+        "layoutInfo": {
+          "height": 50,
+          "position-left": {
+            "target": "LEFT",
+            "widget": "scrollable"
+          },
+          "position-right": {
+            "target": "RIGHT",
+            "widget": "scrollable"
+          },
+          "position-bottom": {
+            "target": "TOP",
+            "widget": "scrollable",
+            "offset": 3
+          }
+        }
+      },
+      {
+        "type": "ScrollableArea",
+        "id": "scrollable",
+        "content": {
+          "type": "InventoryGrid",
+          "id": "blockPickerGrid",
+          "maxHorizontalCells": 10
+        },
+        "layoutInfo": {
+          "width": 600,
+          "height": 300,
+          "position-horizontal-center": {},
+          "position-top": {
+            "target": "TOP",
+            "offset": 70
+          }
+        }
+      },
+      {
+        "type": "InventoryGrid",
+        "id": "inventory",
+        "maxHorizontalCells": 10,
+        "layoutInfo": {
+          "use-content-width": true,
+          "use-content-height": true,
+          "position-top": {
+            "target": "BOTTOM",
+            "widget": "scrollable",
+            "offset": 16
+          },
+          "position-horizontal-center": {}
+        }
+      }
+    ]
+  }
 }
