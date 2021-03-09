@@ -7,31 +7,31 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.terasology.assets.management.AssetManager;
 import org.terasology.blockPicker.components.BlockPickerComponent;
-import org.terasology.entitySystem.entity.EntityBuilder;
-import org.terasology.entitySystem.entity.EntityManager;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.prefab.Prefab;
-import org.terasology.entitySystem.prefab.PrefabManager;
-import org.terasology.logic.common.DisplayNameComponent;
-import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.logic.inventory.ItemComponent;
-import org.terasology.logic.players.LocalPlayer;
-import org.terasology.registry.CoreRegistry;
-import org.terasology.registry.In;
-import org.terasology.rendering.nui.CoreScreenLayer;
+import org.terasology.engine.entitySystem.entity.EntityBuilder;
+import org.terasology.engine.entitySystem.entity.EntityManager;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.prefab.Prefab;
+import org.terasology.engine.entitySystem.prefab.PrefabManager;
+import org.terasology.engine.logic.common.DisplayNameComponent;
+import org.terasology.engine.logic.inventory.InventoryComponent;
+import org.terasology.engine.logic.inventory.InventoryManager;
+import org.terasology.engine.logic.inventory.ItemComponent;
+import org.terasology.engine.logic.players.LocalPlayer;
+import org.terasology.engine.registry.CoreRegistry;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.rendering.nui.CoreScreenLayer;
+import org.terasology.engine.rendering.nui.layers.ingame.inventory.InventoryGrid;
+import org.terasology.engine.world.block.BlockExplorer;
+import org.terasology.engine.world.block.BlockManager;
+import org.terasology.engine.world.block.BlockUri;
+import org.terasology.engine.world.block.family.BlockFamily;
+import org.terasology.engine.world.block.items.BlockItemComponent;
+import org.terasology.engine.world.block.items.BlockItemFactory;
 import org.terasology.nui.databinding.Binding;
 import org.terasology.nui.databinding.DefaultBinding;
 import org.terasology.nui.databinding.ReadOnlyBinding;
-import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.nui.widgets.UIDropdown;
 import org.terasology.nui.widgets.UIText;
-import org.terasology.world.block.BlockExplorer;
-import org.terasology.world.block.BlockManager;
-import org.terasology.world.block.BlockUri;
-import org.terasology.world.block.family.BlockFamily;
-import org.terasology.world.block.items.BlockItemComponent;
-import org.terasology.world.block.items.BlockItemFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +162,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     /**
-     * Checks whether the given {@link org.terasology.world.block.items.BlockItemComponent} matches the specific category.
+     * Checks whether the given {@link org.terasology.engine.world.block.items.BlockItemComponent} matches the specific category.
      *
      * @param itemComponent the item's the block item (might be {@code null}).
      * @param category      the category to test in lower case.
@@ -177,8 +177,8 @@ public class BlockPickerScreen extends CoreScreenLayer {
     /**
      * Checks whether the given item matches the filter.
      * <p/>
-     * Usually the given {@link org.terasology.world.block.items.BlockItemComponent} and {@link org.terasology.logic.common.DisplayNameComponent} belong to the same {@link
-     * org.terasology.entitySystem.entity.EntityRef}.
+     * Usually the given {@link org.terasology.engine.world.block.items.BlockItemComponent} and {@link org.terasology.engine.logic.common.DisplayNameComponent} belong to the same {@link
+     * org.terasology.engine.entitySystem.entity.EntityRef}.
      *
      * @param itemComponent the item's block component to test (might be {@code null}).
      * @param nameComponent the item's name component to test (might be {@code null}).
@@ -193,7 +193,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     /**
-     * Checks whether the given {@link org.terasology.logic.common.DisplayNameComponent} matches the given filter.
+     * Checks whether the given {@link org.terasology.engine.logic.common.DisplayNameComponent} matches the given filter.
      *
      * @param nameComponent the name component to test against (might be {@code null}).
      * @param filter        the filter string in lower case.
@@ -204,7 +204,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     /**
-     * Checks whether the {@link org.terasology.world.block.family.BlockFamily}'s categories match the given filter.
+     * Checks whether the {@link org.terasology.engine.world.block.family.BlockFamily}'s categories match the given filter.
      *
      * @param itemComponent the block item (might be {@code null}).
      * @param filter        the filter string in lower case.
@@ -226,7 +226,7 @@ public class BlockPickerScreen extends CoreScreenLayer {
     }
 
     /**
-     * Checks whether the {@link org.terasology.world.block.family.BlockFamily} of the given {@link org.terasology.world.block.items.BlockItemComponent} matches the given
+     * Checks whether the {@link org.terasology.engine.world.block.family.BlockFamily} of the given {@link org.terasology.engine.world.block.items.BlockItemComponent} matches the given
      * filter.
      *
      * @param itemComponent the block item (might be {@code null}).
