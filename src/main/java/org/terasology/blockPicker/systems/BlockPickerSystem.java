@@ -21,11 +21,11 @@ import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.module.inventory.components.InventoryComponent;
+import org.terasology.module.inventory.systems.InventoryManager;
 import org.terasology.engine.logic.inventory.ItemComponent;
-import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
-import org.terasology.logic.inventory.events.InventorySlotStackSizeChangedEvent;
+import org.terasology.module.inventory.events.InventorySlotChangedEvent;
+import org.terasology.module.inventory.events.InventorySlotStackSizeChangedEvent;
 import org.terasology.engine.registry.In;
 
 @RegisterSystem
